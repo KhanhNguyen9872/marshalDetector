@@ -208,9 +208,9 @@ else:
 # result
 
 if not err:
-	print(" ______________________________________")
-	print(" | >> RESULT: marshal is not modified |")
-	print(" ``````````````````````````````````````")
+	print(" _________________________________________")
+	print(" | >> RESULT: marshal is NOT MODIFIED << |")
+	print(" `````````````````````````````````````````")
 	print()
 else:
 	max_length = 0
@@ -220,7 +220,9 @@ else:
 	max_length += 6
 
 	print(" " + ("_"*max_length))
-	print(" | >> RESULT: marshal is modified{} |".format(" " * (max_length - 34)))
+	print(" | >> RESULT: marshal is MODIFIED <<{} |".format(" " * (max_length - 37)))
+	i = ">> INFO: "
+	print(" | {}{} |".format(i, " " * (max_length - len(i) - 4)))
 	for i in err:
 		print(" | - {}{} |".format(i, " " * (max_length - len(i) - 6)))
 	print(" " + ("`"*max_length))
