@@ -1,8 +1,13 @@
 if (__name__ == '__main__'):
 	raise SyntaxError("this tool must import, not run as main file (using: import marshalDetector)")
 
-print(">>>>>> Marshal Detector <<<<<<")
-print(">> Author:  KhanhNguyen9872 <<")
+minor = __import__('sys').version_info.minor
+
+print(" ________________________________")
+print(" |>>>>>> Marshal Detector <<<<<<|")
+print(" |>> Author:  KhanhNguyen9872 <<|")
+print(" |>>>>>>>> Python: {}3.{} <<<<<<<<|".format(" " if len(str(minor)) == 1 else "", minor))
+print(" ````````````````````````````````")
 
 err = []
 push = err.append
@@ -87,7 +92,14 @@ if (obj != None):
 		push("marshal.loads: __qualname__ not found")
 
 	try:
-		if not (str(obj.__doc__) == 'Convert the bytes-like object to a value.\n\nIf no valid value is found, raise EOFError, ValueError or TypeError.  Extra\nbytes in the input are ignored.'):
+		if minor == 6:
+			doc = 'loads(bytes)\n\nConvert the bytes-like object to a value. If no valid value is found,\nraise EOFError, ValueError or TypeError. Extra bytes in the input are\nignored.'
+		elif minor == 7 or minor == 8 or minor == 9 or minor == 10 or minor == 11 or minor == 12:
+			doc = 'Convert the bytes-like object to a value.\n\nIf no valid value is found, raise EOFError, ValueError or TypeError.  Extra\nbytes in the input are ignored.'
+		elif minor == 13 or minor == 14:
+			doc = 'Convert the bytes-like object to a value.\n\n  allow_code\n    Allow to load code objects.\n\nIf no valid value is found, raise EOFError, ValueError or TypeError.  Extra\nbytes in the input are ignored.'
+		
+		if not (str(obj.__doc__) == doc):
 			push("marshal.loads: wrong __doc__")
 	except Exception as e:
 		push("marshal.loads: __doc__ not found")
@@ -132,18 +144,27 @@ if (obj != None):
 		else:
 			push("marshal.loads: found __dict__ and wrong Exception")
 
-	allAttr = ['__repr__', '__hash__', '__call__', '__getattribute__', '__lt__', '__le__', '__eq__', '__ne__', '__gt__', '__ge__', '__reduce__', '__module__', '__doc__', '__name__', '__qualname__', '__self__', '__text_signature__', '__new__', '__str__', '__setattr__', '__delattr__', '__init__', '__reduce_ex__', '__getstate__', '__subclasshook__', '__init_subclass__', '__format__', '__sizeof__', '__dir__', '__class__']
-	for i in allAttr:
-		try:
-			p = getattr(obj, i)
-		except Exception as e:
-			push("marshal.loads: {} not found".format(i))
+	if minor == 6 or minor == 7 or minor == 8 or minor == 9:
+		allAttr = ['__repr__', '__hash__', '__call__', '__getattribute__', '__lt__', '__le__', '__eq__', '__ne__', '__gt__', '__ge__', '__reduce__', '__module__', '__doc__', '__name__', '__qualname__', '__self__', '__text_signature__', '__str__', '__setattr__', '__delattr__', '__init__', '__new__', '__reduce_ex__', '__subclasshook__', '__init_subclass__', '__format__', '__sizeof__', '__dir__', '__class__']
+	elif minor == 10:
+		allAttr = ['__repr__', '__hash__', '__call__', '__getattribute__', '__lt__', '__le__', '__eq__', '__ne__', '__gt__', '__ge__', '__reduce__', '__module__', '__doc__', '__name__', '__qualname__', '__self__', '__text_signature__', '__new__', '__str__', '__setattr__', '__delattr__', '__init__', '__reduce_ex__', '__subclasshook__', '__init_subclass__', '__format__', '__sizeof__', '__dir__', '__class__']
+	elif minor == 11 or minor == 12 or minor == 13 or minor == 14:
+		allAttr = ['__repr__', '__hash__', '__call__', '__getattribute__', '__lt__', '__le__', '__eq__', '__ne__', '__gt__', '__ge__', '__reduce__', '__module__', '__doc__', '__name__', '__qualname__', '__self__', '__text_signature__', '__new__', '__str__', '__setattr__', '__delattr__', '__init__', '__reduce_ex__', '__getstate__', '__subclasshook__', '__init_subclass__', '__format__', '__sizeof__', '__dir__', '__class__']
 
-	try:
-		if not (obj.__dir__() == allAttr):
-			push("marshal.loads: __dir__ is replaced")
-	except Exception as e:
-		push("marshal.loads: __dir__ not found")
+	if allAttr:
+		for i in allAttr:
+			try:
+				p = getattr(obj, i)
+			except Exception as e:
+				push("marshal.loads: {} not found".format(i))
+
+		try:
+			if not (obj.__dir__() == allAttr):
+				push("marshal.loads: __dir__ is replaced")
+		except Exception as e:
+			push("marshal.loads: __dir__ not found")
+	else:
+		print("python version not supported")
 
 	try:
 		obj.__globals__
@@ -169,7 +190,7 @@ if (obj != None):
 		push("marshal.loads: argument is modified")
 	except Exception as e:
 		if (type(e) == TypeError):
-			if (" takes exactly one argument " in str(e)):
+			if ((" takes exactly one argument " in str(e)) or (" takes exactly 1 argument " in str(e)) or (" takes exactly 1 positional argument" in str(e))):
 				pass
 			else:
 				push("marshal.loads: argument is modified")
@@ -187,8 +208,20 @@ else:
 # result
 
 if not err:
-	print(">> Result: marshal is not modified!")
+	print(" ______________________________________")
+	print(" | >> RESULT: marshal is not modified |")
+	print(" ``````````````````````````````````````")
+	print()
 else:
-	print(">> Result: marshal is modified!")
+	max_length = 0
 	for i in err:
-		print(" - {}".format(i))
+		if len(i) > max_length:
+			max_length = len(i)
+	max_length += 6
+
+	print(" " + ("_"*max_length))
+	print(" | >> RESULT: marshal is modified{} |".format(" " * (max_length - 34)))
+	for i in err:
+		print(" | - {}{} |".format(i, " " * (max_length - len(i) - 6)))
+	print(" " + ("`"*max_length))
+	print()
