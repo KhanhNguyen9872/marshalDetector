@@ -130,7 +130,7 @@ if (obj != None):
 			else:
 				push("marshal.loads: not found __dict__ but wrong Exception")
 		else:
-			push("marshal.loads: found __dict__ but wrong Exception")
+			push("marshal.loads: found __dict__ and wrong Exception")
 
 	allAttr = ['__repr__', '__hash__', '__call__', '__getattribute__', '__lt__', '__le__', '__eq__', '__ne__', '__gt__', '__ge__', '__reduce__', '__module__', '__doc__', '__name__', '__qualname__', '__self__', '__text_signature__', '__new__', '__str__', '__setattr__', '__delattr__', '__init__', '__reduce_ex__', '__getstate__', '__subclasshook__', '__init_subclass__', '__format__', '__sizeof__', '__dir__', '__class__']
 	for i in allAttr:
@@ -155,7 +155,7 @@ if (obj != None):
 			else:
 				push("marshal.loads: not found __globals__ but wrong Exception")
 		else:
-			push("marshal.loads: found __globals__ but wrong Exception")
+			push("marshal.loads: found __globals__ and wrong Exception")
 
 	try:
 		p = marshal.dumps(compile("'1'", '', 'eval'))
