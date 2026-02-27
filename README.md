@@ -9,16 +9,32 @@ A powerful, native Python hook designed to detect and monitor `marshal.loads` ca
 - **Wide Compatibility**: Pre-built binaries for Windows (x64) across Python versions 3.9 up to 3.15.
 - **Auditing**: Ideal for detecting potentially malicious payloads in `marshal` data.
 
-## Usage
+## 📸 Screenshots
+
+| Clean State | Detected Modification |
+| :---: | :---: |
+| ![Clean State](images/clean.png) | ![Detected Modification](images/detected.png) |
+
+## 🛠️ Usage
 
 To integrate the detector into your workflow, simply import it at the beginning of your script:
 
 ```python
 ## modify your marshal.loads here
+""" // this is comment //
+import marshal
 
+original_loads = marshal.loads
 
+def hooked_loads(data):
+    print("[+] marshal.loads called")    
+    result = original_loads(data)
+    return result
 
-## let's detect it
+marshal.loads = hooked_loads
+"""
+
+## let's detect it, you will get the output
 import marshalDetector
 ```
 
